@@ -9,7 +9,6 @@ cache: true
 
 # Custom interface configuration
 interface:
-  customWelcome: "Welcome to 10X Knowledge! Enjoy your experience."
   customFooter: "10X Knowledge - Powered by [Cardone Ventures](https://cardoneventures.com)"
   endpointsMenu: true
   modelSelect: true
@@ -30,7 +29,7 @@ registration:
 endpoints:
   # Assistants
   assistants:
-    disableBuilder: false
+    disableBuilder: true
     pollIntervalMs: 3000
     timeoutMs: 180000
     supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6"]
@@ -44,7 +43,19 @@ endpoints:
       baseURL: 'https://api.openai.com/v1'
       models:
         default: ['gpt-4o', 'o1', 'gpt-4.5-preview']
-        fetch: true
+        fetch: false
       titleConvo: true
       titleModel: 'gpt-3.5-turbo'
       modelDisplayLabel: 'OpenAI'
+
+modelSpecs:
+  prioritize: true
+  list:
+    - name: "10x-knowledge"
+      label: "10X Knowledge"
+      default: true
+      description: "Your knowledge base AI for Cardone Ventures."
+      preset:
+        endpoint: "assistants"
+        assistant_id: "asst_sEAoCp3Uk4Dwswt3HTb2OKu6"
+        capabilities: ["retrieval", "code_interpreter"]
