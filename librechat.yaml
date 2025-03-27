@@ -4,7 +4,7 @@
 # Configuration version (required)
 version: 1.2.1
 
-# Cache settings: Set to true to enable caching
+# Enable caching
 cache: true
 
 # Custom interface configuration
@@ -20,27 +20,30 @@ interface:
   multiConvo: true
   agents: true
 
-# Registration configuration
+# Registration settings
 registration:
   allowedDomains:
     - "cardoneventures.com"
 
-# Definition of endpoints
+# Endpoints (split properly!)
 endpoints:
-  openai:
-    apiKey: '${OPENAI_API_KEY}'
-    baseURL: 'https://api.openai.com/v1'
-    models:
-      default: ['gpt-4o', 'o1', 'gpt-4.5-preview']
-      fetch: true
-    titleConvo: true
-    titleModel: 'gpt-3.5-turbo'
-    modelDisplayLabel: 'OpenAI'
-
+  # Assistants
   assistants:
-    disableBuilder: true
+    disableBuilder: false
     pollIntervalMs: 3000
     timeoutMs: 180000
     supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6"]
     retrievalModels: ["gpt-4o"]
-    capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"] 
+    capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
+
+  # OpenAI
+  custom:
+    - name: 'OpenAI'
+      apiKey: '${OPENAI_API_KEY}'
+      baseURL: 'https://api.openai.com/v1'
+      models:
+        default: ['gpt-4o', 'o1', 'gpt-4.5-preview']
+        fetch: true
+      titleConvo: true
+      titleModel: 'gpt-3.5-turbo'
+      modelDisplayLabel: 'OpenAI'
