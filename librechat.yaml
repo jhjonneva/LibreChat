@@ -10,15 +10,15 @@ cache: true
 # Custom interface configuration
 interface:
   customFooter: "10X Knowledge - Powered by [Cardone Ventures](https://cardoneventures.com)"
-  endpointsMenu: true
-  modelSelect: true
+  endpointsMenu: false
+  modelSelect: false
   parameters: false
   sidePanel: true
   presets: true
   prompts: true
   bookmarks: true
-  multiConvo: true
-  agents: true
+  multiConvo: false
+  agents: false
 
 # Registration settings
 registration:
@@ -57,5 +57,6 @@ modelSpecs:
       description: "Your knowledge base AI for Cardone Ventures."
       preset:
         endpoint: "assistants"
+        model: "gpt-4o"
         assistant_id: "asst_sEAoCp3Uk4Dwswt3HTb2OKu6"
         capabilities: ["retrieval", "code_interpreter"]
