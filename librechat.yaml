@@ -12,7 +12,7 @@ interface:
   customWelcome: "Welcome to 10X Knowledge! Enjoy your experience."
   endpointsMenu: true
   modelSelect: true
-  parameters: true
+  parameters: false
   sidePanel: true
   presets: true
   prompts: true
@@ -22,7 +22,6 @@ interface:
 
 # Registration configuration
 registration:
-  socialLogins: ['google']
   allowedDomains:
     - "cardoneventures.com"
 
@@ -32,7 +31,7 @@ endpoints:
     apiKey: '${OPENAI_API_KEY}'
     baseURL: 'https://api.openai.com/v1'
     models:
-      default: ['gpt-4o', 'gpt-4.5-preview', 'o1']
+      default: ['gpt-4o', 'o1', 'gpt-4.5-preview']
       fetch: true
     titleConvo: true
     titleModel: 'gpt-3.5-turbo'
@@ -43,5 +42,5 @@ endpoints:
     pollIntervalMs: 3000
     timeoutMs: 180000
     supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6"]
-    retrievalModels: ["gpt-4"]
+    retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"] 
