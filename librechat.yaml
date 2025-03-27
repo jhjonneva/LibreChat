@@ -36,7 +36,7 @@ endpoints:
     retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
 
-# OpenAI (disabled)
+# OpenAI configuration
 custom:
   - name: 'OpenAI'
     apiKey: '${OPENAI_API_KEY}'
