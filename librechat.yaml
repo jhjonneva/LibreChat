@@ -11,10 +11,10 @@ cache: true
 interface:
   customFooter: "10X Knowledge - Powered by [Cardone Ventures](https://cardoneventures.com)"
   endpointsMenu: false
-  modelSelect: false
+  modelSelect: true
   parameters: false
   sidePanel: true
-  presets: true
+  presets: false
   prompts: true
   bookmarks: true
   multiConvo: false
@@ -36,17 +36,17 @@ endpoints:
     retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
 
-  # OpenAI
-  custom:
-    - name: 'OpenAI'
-      apiKey: '${OPENAI_API_KEY}'
-      baseURL: 'https://api.openai.com/v1'
-      models:
-        default: ['gpt-4o', 'o1', 'gpt-4.5-preview']
-        fetch: false
-      titleConvo: true
-      titleModel: 'gpt-3.5-turbo'
-      modelDisplayLabel: 'OpenAI'
+  # OpenAI (disabled)
+  # custom:
+  #   - name: 'OpenAI'
+  #     apiKey: '${OPENAI_API_KEY}'
+  #     baseURL: 'https://api.openai.com/v1'
+  #     models:
+  #       default: ['gpt-4o', 'o1', 'gpt-4.5-preview']
+  #       fetch: false
+  #     titleConvo: true
+  #     titleModel: 'gpt-3.5-turbo'
+  #     modelDisplayLabel: 'OpenAI'
 
 modelSpecs:
   prioritize: true
