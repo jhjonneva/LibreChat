@@ -10,6 +10,7 @@ cache: true
 # Custom interface configuration
 interface:
   customWelcome: "Welcome to 10X Knowledge! Enjoy your experience."
+  customFooter: "10X Knowledge - Powered by [Cardone Ventures](https://cardoneventures.com)"
   endpointsMenu: true
   modelSelect: true
   parameters: false
