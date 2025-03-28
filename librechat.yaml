@@ -32,7 +32,7 @@ endpoints:
     disableBuilder: true
     pollIntervalMs: 3000
     timeoutMs: 180000
-    supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6"]
+    supportedIds: ["${ASSISTANT_ID}"]
     retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
 
@@ -47,11 +47,11 @@ modelSpecs:
       preset:
         endpoint: "assistants"
         model: "gpt-4o"
-        assistant_id: "asst_sEAoCp3Uk4Dwswt3HTb2OKu6"
+        assistant_id: "${ASSISTANT_ID}"
         capabilities: ["retrieval", "code_interpreter"]
 
 # OpenAI configuration
-#custom:
+# custom:
 #  - name: 'OpenAI'
 #    apiKey: '${OPENAI_API_KEY}'
 #    baseURL: 'https://api.openai.com/v1'
