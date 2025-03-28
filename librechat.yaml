@@ -10,7 +10,7 @@ cache: true
 # Custom interface configuration
 interface:
   customFooter: "10X Knowledge - Powered by [Cardone Ventures](https://cardoneventures.com)"
-  endpointsMenu: false
+  endpointsMenu: true
   modelSelect: true
   parameters: false
   sidePanel: true
@@ -27,8 +27,8 @@ registration:
 
 # Endpoints (split properly!)
 endpoints:
-  # Assistants
   assistants:
+    apiKey: '${OPENAI_API_KEY}'
     disableBuilder: true
     pollIntervalMs: 3000
     timeoutMs: 180000
@@ -41,8 +41,6 @@ modelSpecs:
   prioritize: true
   list:
     - name: "10x-knowledge"
-      apiKey: '${OPENAI_API_KEY}'
-      baseURL: 'https://api.openai.com/v1'
       label: "10X Knowledge"
       default: true
       description: "Your knowledge base AI for Cardone Ventures."
