@@ -63,9 +63,14 @@ function AuthLayout({
       <BlinkAnimation active={isFetching}>
         <div className="mt-6 h-10 w-full bg-cover">
           <img
-            className="h-full w-full object-contain"
-            src="/assets/logo.png"
-            alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? 'LibreChat' })}
+            className="h-full w-full object-contain dark:hidden"
+            src="/public/assets/logo-light.png"
+            alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? '10X Knowledge' })}
+          />
+          <img
+            className="h-full w-full object-contain hidden dark:block"
+            src="/public/assets/logo-dark.png"
+            alt={localize('com_ui_logo', { 0: startupConfig?.appTitle ?? '10X Knowledge' })}
           />
         </div>
       </BlinkAnimation>
