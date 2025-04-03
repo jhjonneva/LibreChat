@@ -31,6 +31,7 @@ RUN mkdir -p /app/client/public/images /app/api/logs
 # Node API setup
 EXPOSE 3080
 ENV HOST=0.0.0.0
+ENV CONFIG_PATH=$CONFIG_PATH
 CMD ["npm", "run", "backend"]
 
 # Optional: for client with nginx routing
