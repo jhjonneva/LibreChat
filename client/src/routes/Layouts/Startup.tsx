@@ -38,7 +38,7 @@ export default function StartupLayout({ isAuthenticated }: { isAuthenticated?: b
   }, [isAuthenticated, navigate, data]);
 
   useEffect(() => {
-    document.title = startupConfig?.appTitle || '10X Knowledge';
+     document.title = startupConfig?.appTitle || '10X Knowledge';
   }, [startupConfig?.appTitle]);
 
   useEffect(() => {
