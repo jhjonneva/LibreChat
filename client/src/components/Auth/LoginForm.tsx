@@ -167,6 +167,7 @@ const LoginForm: React.FC<TLoginFormProps> = ({ onSubmit, startupConfig, error, 
             className="
             w-full rounded-2xl bg-[#C8102E] px-4 py-3 text-sm font-medium text-white
             transition-colors hover:bg-[#E63E5C] dark:bg-[#10C8AA] dark:hover:bg-[#10C8AA]
+
           "
           >
             {localize('com_auth_continue')}
