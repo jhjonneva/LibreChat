@@ -181,6 +181,8 @@ async function setupSaml() {
       idpCert: getCertificateContent(process.env.SAML_CERT),
       wantAssertionsSigned: process.env.SAML_USE_AUTHN_RESPONSE_SIGNED === 'true' ? false : true,
       wantAuthnResponseSigned: process.env.SAML_USE_AUTHN_RESPONSE_SIGNED === 'true' ? true : false,
+      audience: false, // Don't validate audience restrictions
+      acceptedClockSkewMs: 5 * 60 * 1000, // 5 minutes clock skew for time validation
     };
 
     passport.use(
