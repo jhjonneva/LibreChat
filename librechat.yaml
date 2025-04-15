@@ -27,7 +27,7 @@ registration:
 
 endpoints:
   assistants:
-    disableBuilder: true
+    disableBuilder: false
     pollIntervalMs: 3000
     timeoutMs: 180000
     # supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6"]
