@@ -22,8 +22,8 @@ interface:
 # Example Registration Object Structure (optional)
 registration:
   socialLogins: ['saml']
-  # allowedDomains:
-  # - "gmail.com"
+  allowedDomains:
+  - "cardoneventures.com"
 
 endpoints:
   assistants:
