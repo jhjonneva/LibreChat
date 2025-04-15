@@ -27,7 +27,7 @@ registration:
 
 endpoints:
   assistants:
-    disableBuilder: true
+    disableBuilder: false
     pollIntervalMs: 3000
     timeoutMs: 180000
     # supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6"]
@@ -41,7 +41,7 @@ modelSpecs:
     - name: "10x-knowledge"
       label: "10X Knowledge"
       default: true
-      description: "Your knowledge base AI for Cardone Ventures."
+      description: "AI assistant and knowledge base"
       preset:
         endpoint: "assistants"
         # model: "gpt-4o"
