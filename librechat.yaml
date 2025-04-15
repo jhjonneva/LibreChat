@@ -42,6 +42,9 @@ modelSpecs:
       label: "10X Knowledge"
       default: true
       description: "AI assistant and knowledge base"
+      iconURL: "/assets/logo.png"
+      showIconInMenu: true
+      showIconInHeader: true
       preset:
         endpoint: "assistants"
         # model: "gpt-4o"
