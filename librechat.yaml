@@ -52,60 +52,37 @@ modelSpecs:
         model: "gpt-4o"
         assistant_id: "asst_sEAoCp3Uk4Dwswt3HTb2OKu6"
         capabilities: ["retrieval", "code_interpreter"]
-    - name: "10x-knowledge-dev"
-      label: "10X Knowledge (Dev)"
-      default: true
-      description: "AI assistant and knowledge base"
-      iconURL: "/assets/logo.png"
-      showIconInMenu: true
-      showIconInHeader: true
-      preset:
-        endpoint: "assistants"
-        model: "gpt-4o"
-        assistant_id: "asst_HKOeFYKyiX7y88HBzmfPqRkJ"
-        capabilities: ["retrieval", "code_interpreter"]
     - name: "gpt-4o"
       label: "GPT-4o"
-      description: "Most capable OpenAI model for a wide range of tasks"
+      description: "Great for most questions"
       preset:
         endpoint: "openAI"
         model: "gpt-4o"
-    - name: "gpt-4.5-preview"
-      label: "GPT-4.5 Preview"
-      description: "Preview of GPT-4.5 capabilities"
-      preset:
-        endpoint: "openAI"
-        model: "gpt-4.5-preview"
     - name: "gpt-4o-mini"
       label: "GPT-4o Mini"
-      description: "Smaller, faster version of GPT-4o"
+      description: "Fastest for most questions"
       preset:
         endpoint: "openAI"
         model: "gpt-4o-mini"
-    - name: "o1-mini"
-      label: "o1 Mini"
-      description: "Smaller version of o1 model"
+    - name: "gpt-4.1"
+      label: "GPT-4.1"
+      description: "Newest model from OpenAI"
       preset:
         endpoint: "openAI"
-        model: "o1-mini"
+        model: "gpt-4.1"
     - name: "o3-mini"
       label: "o3 Mini"
-      description: "Smaller version of o3 model"
+      description: "Use fast advanced reasoning"
       preset:
         endpoint: "openAI"
         model: "o3-mini"
-    - name: "gpt-3.5-turbo"
-      label: "GPT-3.5 Turbo"
-      description: "Fast and efficient model for most tasks"
-      preset:
-        endpoint: "openAI"
-        model: "gpt-3.5-turbo-0125"
-    - name: "gpt-4"
-      label: "GPT-4"
-      description: "Original GPT-4 model"
-      preset:
-        endpoint: "openAI"
-        model: "gpt-4"
+    # - name: "o4-mini"
+    #   label: "o4 Mini"
+    #   description: "Fastest for advanced reasoning"
+    #   preset:
+    #     endpoint: "openAI"
+    #     model: "o4-mini"
+
 
 # rateLimits:
 #   fileUploads:
