@@ -18,10 +18,12 @@ const validateAssistant = async (req, res, next) => {
     return next();
   }
 
-  const { supportedIds, excludedIds } = assistantsConfig;
+  const { supportedIds, excludedIds, privateAssistants } = assistantsConfig;
   const error = { message: 'validateAssistant: Assistant not supported' };
 
-  if (supportedIds?.length && !supportedIds.includes(assistant_id)) {
+  if (privateAssistants && supportedIds?.length) {
+    return next();
+  } else if (supportedIds?.length && !supportedIds.includes(assistant_id)) {
     return await handleAbortError(res, req, error, {
       sender: 'System',
       conversationId,

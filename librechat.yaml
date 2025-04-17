@@ -30,9 +30,11 @@ endpoints:
     disableBuilder: false
     pollIntervalMs: 3000
     timeoutMs: 180000
-    # supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6"]
+    supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6", "asst_HKOeFYKyiX7y88HBzmfPqRkJ"]
     retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
+    privateAssistants: true
+    apiKey: "${ASSISTANTS_API_KEY}"
 
 modelSpecs:
   enforce: false
@@ -47,8 +49,20 @@ modelSpecs:
       showIconInHeader: true
       preset:
         endpoint: "assistants"
-        # model: "gpt-4o"
-        # assistant_id: "asst_sEAoCp3Uk4Dwswt3HTb2OKu6"
+        model: "gpt-4o"
+        assistant_id: "asst_sEAoCp3Uk4Dwswt3HTb2OKu6"
+        capabilities: ["retrieval", "code_interpreter"]
+    - name: "10x-knowledge-dev"
+      label: "10X Knowledge (Dev)"
+      default: true
+      description: "AI assistant and knowledge base"
+      iconURL: "/assets/logo.png"
+      showIconInMenu: true
+      showIconInHeader: true
+      preset:
+        endpoint: "assistants"
+        model: "gpt-4o"
+        assistant_id: "asst_HKOeFYKyiX7y88HBzmfPqRkJ"
         capabilities: ["retrieval", "code_interpreter"]
     - name: "gpt-4o"
       label: "GPT-4o"

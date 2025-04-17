@@ -30,6 +30,11 @@ const validateAuthor = async ({ req, openai, overrideEndpoint, overrideAssistant
     return;
   }
 
+  // Allow assistants explicitly listed in supportedIds regardless of author
+  if (assistantsConfig.supportedIds?.length && assistantsConfig.supportedIds.includes(assistant_id)) {
+    return;
+  }
+
   const assistantDoc = await getAssistant({ assistant_id, user: req.user.id });
   if (assistantDoc) {
     return;
