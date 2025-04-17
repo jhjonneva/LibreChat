@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import type { ContextType } from '~/common';
 import {
   AgentsMapContext,
@@ -21,12 +21,49 @@ export default function Root() {
     const savedNavVisible = localStorage.getItem('navVisible');
     return savedNavVisible !== null ? JSON.parse(savedNavVisible) : true;
   });
+  const [isAuthComplete, setIsAuthComplete] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const location = useLocation();
 
   const { isAuthenticated, logout } = useAuthContext();
+
+  // Check if we just completed auth
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const authComplete = params.get('auth_complete') === 'true';
+
+    if (authComplete) {
+      setIsAuthComplete(true);
+      // Clear the auth_complete parameter from URL
+      params.delete('auth_complete');
+      const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
+      window.history.replaceState({}, document.title, newUrl);
+
+      // Wait for authentication to settle
+      setTimeout(() => {
+        setIsInitialized(true);
+      }, 800);
+    } else {
+      setIsInitialized(true);
+    }
+  }, [location.search]);
+
+  // Only enable data fetching when initialized
+  const shouldFetch = isAuthenticated && isInitialized;
+
+  // For now, pass standard props to existing hooks
+  // We'll control the data fetching by manually triggering it after SAML auth
   const assistantsMap = useAssistantsMap({ isAuthenticated });
   const agentsMap = useAgentsMap({ isAuthenticated });
   const fileMap = useFileMap({ isAuthenticated });
   const search = useSearch({ isAuthenticated });
+
+  // If auth is complete but we're not initialized, show loading state
+  useEffect(() => {
+    if (isAuthComplete && !isInitialized) {
+      console.log('Auth complete, waiting for session to initialize before loading data...');
+    }
+  }, [isAuthComplete, isInitialized]);
 
   const { data: config } = useGetStartupConfig();
   const { data: termsData } = useUserTermsQuery({
