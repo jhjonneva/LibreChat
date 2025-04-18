@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import type { ContextType } from '~/common';
 import {
@@ -23,9 +23,10 @@ export default function Root() {
   });
   const [isAuthComplete, setIsAuthComplete] = useState(false);
   const [isInitialized, setIsInitialized] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   const location = useLocation();
 
-  const { isAuthenticated, logout } = useAuthContext();
+  const { isAuthenticated, token, logout } = useAuthContext();
 
   // Check if we just completed auth
   useEffect(() => {
@@ -39,31 +40,49 @@ export default function Root() {
       const newUrl = window.location.pathname + (params.toString() ? `?${params.toString()}` : '');
       window.history.replaceState({}, document.title, newUrl);
 
-      // Wait for authentication to settle
+      // Wait for authentication to settle with a longer delay
       setTimeout(() => {
         setIsInitialized(true);
-      }, 800);
+      }, 1200);
     } else {
       setIsInitialized(true);
     }
   }, [location.search]);
 
-  // Only enable data fetching when initialized
-  const shouldFetch = isAuthenticated && isInitialized;
+  // Add a retry mechanism for when auth is complete but token might not be ready
+  useEffect(() => {
+    if (isAuthComplete && isInitialized && !token && retryCount < 5) {
+      const retryTimer = setTimeout(() => {
+        console.log(`Retrying authentication check (attempt ${retryCount + 1}/5)...`);
+        setRetryCount(prev => prev + 1);
+        // Force a re-render to check auth state again
+        setIsInitialized(false);
+        setTimeout(() => setIsInitialized(true), 500);
+      }, 1000);
+      return () => clearTimeout(retryTimer);
+    }
+  }, [isAuthComplete, isInitialized, token, retryCount]);
+
+  // Only enable data fetching when initialized and we have a token
+  const shouldFetch = isAuthenticated && isInitialized && !!token;
 
   // For now, pass standard props to existing hooks
   // We'll control the data fetching by manually triggering it after SAML auth
-  const assistantsMap = useAssistantsMap({ isAuthenticated });
-  const agentsMap = useAgentsMap({ isAuthenticated });
-  const fileMap = useFileMap({ isAuthenticated });
-  const search = useSearch({ isAuthenticated });
+  const assistantsMap = useAssistantsMap({ isAuthenticated: shouldFetch });
+  const agentsMap = useAgentsMap({ isAuthenticated: shouldFetch });
+  const fileMap = useFileMap({ isAuthenticated: shouldFetch });
+  const search = useSearch({ isAuthenticated: shouldFetch });
 
   // If auth is complete but we're not initialized, show loading state
   useEffect(() => {
     if (isAuthComplete && !isInitialized) {
       console.log('Auth complete, waiting for session to initialize before loading data...');
+    } else if (isAuthComplete && isInitialized && !token) {
+      console.log('Session initialized but token not available yet, may retry...');
+    } else if (isAuthComplete && isInitialized && token) {
+      console.log('Authentication complete and token available, ready to fetch data');
     }
-  }, [isAuthComplete, isInitialized]);
+  }, [isAuthComplete, isInitialized, token]);
 
   const { data: config } = useGetStartupConfig();
   const { data: termsData } = useUserTermsQuery({
