@@ -8,6 +8,7 @@ const {
 } = require('~/server/services/AuthService');
 const { findSession, getUserById, deleteAllUserSessions } = require('~/models');
 const { logger } = require('~/config');
+const { addToGracePeriod, isInGracePeriod } = require('~/server/services/TokenGraceService');
 
 const registrationController = async (req, res) => {
   try {
@@ -18,7 +19,7 @@ const registrationController = async (req, res) => {
     logger.error('[registrationController]', err);
     return res.status(500).json({ message: err.message });
   }
-};
+}
 
 const resetPasswordRequestController = async (req, res) => {
   try {
@@ -32,7 +33,7 @@ const resetPasswordRequestController = async (req, res) => {
     logger.error('[resetPasswordRequestController]', e);
     return res.status(400).json({ message: e.message });
   }
-};
+}
 
 const resetPasswordController = async (req, res) => {
   try {
@@ -51,7 +52,7 @@ const resetPasswordController = async (req, res) => {
     logger.error('[resetPasswordController]', e);
     return res.status(400).json({ message: e.message });
   }
-};
+}
 
 const refreshController = async (req, res) => {
   const refreshToken = req.headers.cookie ? cookies.parse(req.headers.cookie).refreshToken : null;
@@ -77,7 +78,18 @@ const refreshController = async (req, res) => {
     const session = await findSession({ userId: userId, refreshToken: refreshToken });
 
     if (session && session.expiration > new Date()) {
+      // Valid session found - generate new tokens
       const token = await setAuthTokens(userId, res, session._id);
+      
+      // Add the current token to grace period before responding
+      // This allows the token to be used again for a short time
+      addToGracePeriod(refreshToken, userId);
+      
+      res.status(200).send({ token, user });
+    } else if (isInGracePeriod(refreshToken, userId)) {
+      // Token is in grace period - still allow it
+      logger.info(`[refreshController] Using token in grace period for user ${userId}`);
+      const token = await setAuthTokens(userId, res);
       res.status(200).send({ token, user });
     } else if (req?.query?.retry) {
       // Retrying from a refresh token request that failed (401)
@@ -91,11 +103,11 @@ const refreshController = async (req, res) => {
     logger.error(`[refreshController] Refresh token: ${refreshToken}`, err);
     res.status(403).send('Invalid refresh token');
   }
-};
+}
 
 module.exports = {
   refreshController,
   registrationController,
   resetPasswordController,
   resetPasswordRequestController,
-};
+}

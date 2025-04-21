@@ -25,6 +25,10 @@ import store from '~/store';
 
 const AuthContext = createContext<TAuthContext | undefined>(undefined);
 
+// Singleton promise for refresh token to prevent race conditions
+let refreshPromise: Promise<any> | null = null;
+let isRefreshing = false;
+
 const AuthContextProvider = ({
   authConfig,
   children,
@@ -37,6 +41,7 @@ const AuthContextProvider = ({
   const [error, setError] = useState<string | undefined>(undefined);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const logoutRedirectRef = useRef<string | undefined>(undefined);
+  const isSamlRedirectRef = useRef<boolean>(false);
 
   const { data: userRole = null } = useGetRole(SystemRoles.USER, {
     enabled: !!(isAuthenticated && (user?.role ?? '')),
@@ -46,6 +51,18 @@ const AuthContextProvider = ({
   });
 
   const navigate = useNavigate();
+
+  // Check if we're coming from a SAML redirect
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/c/new' && document.referrer.includes('/oauth/saml')) {
+      isSamlRedirectRef.current = true;
+      // Add a small delay for cookie propagation after SAML redirect
+      setTimeout(() => {
+        isSamlRedirectRef.current = false;
+      }, 2000);
+    }
+  }, []);
 
   const setUserContext = useCallback(
     (userContext: TUserContext) => {
@@ -126,33 +143,87 @@ const AuthContextProvider = ({
     loginUser.mutate(data);
   };
 
+  // Race-condition-safe refresh token implementation
   const silentRefresh = useCallback(() => {
     if (authConfig?.test === true) {
       console.log('Test mode. Skipping silent refresh.');
-      return;
+      return Promise.resolve(null);
     }
-    refreshToken.mutate(undefined, {
-      onSuccess: (data: t.TRefreshTokenResponse | undefined) => {
-        const { user, token = '' } = data ?? {};
-        if (token) {
-          setUserContext({ token, isAuthenticated: true, user });
-        } else {
-          console.log('Token is not present. User is not authenticated.');
+
+    // If we're coming from a SAML redirect, add a small delay
+    if (isSamlRedirectRef.current) {
+      console.log('SAML redirect detected, adding delay before refresh');
+      const delay = 500; // 500ms delay for cookie propagation
+      
+      // Return a promise that resolves after the delay
+      return new Promise(resolve => {
+        setTimeout(() => {
+          // After delay, perform the refresh with the singleton pattern
+          if (refreshPromise) {
+            resolve(refreshPromise);
+          } else {
+            performRefresh().then(resolve);
+          }
+        }, delay);
+      });
+    }
+
+    // Use existing promise if one is in flight
+    if (refreshPromise) {
+      console.log('Using existing refresh promise');
+      return refreshPromise;
+    }
+
+    return performRefresh();
+  }, []);
+
+  // The actual refresh token operation
+  const performRefresh = () => {
+    console.log('Starting new refresh token request');
+    isRefreshing = true;
+    
+    // Create a new promise for this refresh operation
+    refreshPromise = new Promise((resolve) => {
+      refreshToken.mutate(undefined, {
+        onSuccess: (data: t.TRefreshTokenResponse | undefined) => {
+          const { user, token = '' } = data ?? {};
+          if (token) {
+            setUserContext({ token, isAuthenticated: true, user });
+            resolve(data);
+          } else {
+            console.log('Token is not present. User is not authenticated.');
+            if (authConfig?.test === true) {
+              resolve(null);
+              return;
+            }
+            navigate('/login');
+            resolve(null);
+          }
+          // Reset the singleton after completion
+          setTimeout(() => {
+            refreshPromise = null;
+            isRefreshing = false;
+          }, 100);
+        },
+        onError: (error) => {
+          console.log('refreshToken mutation error:', error);
           if (authConfig?.test === true) {
+            resolve(null);
             return;
           }
           navigate('/login');
-        }
-      },
-      onError: (error) => {
-        console.log('refreshToken mutation error:', error);
-        if (authConfig?.test === true) {
-          return;
-        }
-        navigate('/login');
-      },
+          resolve(null);
+          // Reset the singleton after completion
+          setTimeout(() => {
+            refreshPromise = null;
+            isRefreshing = false;
+          }, 100);
+        },
+      });
     });
-  }, []);
+    
+    return refreshPromise;
+  };
 
   useEffect(() => {
     if (userQuery.data) {
