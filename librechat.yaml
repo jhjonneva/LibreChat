@@ -44,7 +44,7 @@ modelSpecs:
       label: "10X Knowledge"
       default: true
       description: "AI assistant and knowledge base"
-      iconURL: "/assets/logo.png"
+      iconURL: "https://10xknowledge.up.railway.app/assets/logo.png"
       showIconInMenu: true
       showIconInHeader: true
       preset:
