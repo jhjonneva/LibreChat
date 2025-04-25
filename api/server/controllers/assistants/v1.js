@@ -194,9 +194,11 @@ const patchAssistant = async (req, res) => {
 const deleteAssistant = async (req, res) => {
   try {
     const { openai } = await getOpenAIClient({ req, res });
-    await validateAuthor({ req, openai });
 
     const assistant_id = req.params.id;
+
+    await validateAuthor({ req, openai, isDelete: true });
+
     const deletionStatus = await openai.beta.assistants.del(assistant_id);
     if (deletionStatus?.deleted) {
       await deleteAssistantActions({ req, assistant_id });
@@ -204,7 +206,7 @@ const deleteAssistant = async (req, res) => {
     res.json(deletionStatus);
   } catch (error) {
     logger.error('[/assistants/:id] Error deleting assistant', error);
-    res.status(500).json({ error: 'Error deleting assistant' });
+    res.status(500).json({ error: error.message || 'Error deleting assistant' });
   }
 };
 

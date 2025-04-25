@@ -500,6 +500,7 @@
   "com_ui_assistant": "Assistant",
   "com_ui_assistant_delete_error": "There was an error deleting the assistant",
   "com_ui_assistant_deleted": "Successfully deleted assistant",
+  "com_ui_cannot_delete_company_assistant": "Cannot delete this assistant as it is a company assistant",
   "com_ui_assistants": "Assistants",
   "com_ui_assistants_output": "Assistants Output",
   "com_ui_attach_error": "Cannot attach file. Create or select a conversation, or try refreshing the page.",

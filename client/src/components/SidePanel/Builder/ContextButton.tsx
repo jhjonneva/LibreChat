@@ -1,8 +1,9 @@
+import React, { useState } from 'react';
 import type { Assistant, AssistantCreateParams, AssistantsEndpoint } from 'librechat-data-provider';
 import type { UseMutationResult } from '@tanstack/react-query';
 import { Dialog, DialogTrigger, Label } from '~/components/ui';
 import { useChatContext, useToastContext } from '~/Providers';
-import { useDeleteAssistantMutation } from '~/data-provider';
+import { useDeleteAssistantMutation, useGetEndpointsQuery } from '~/data-provider';
 import DialogTemplate from '~/components/ui/DialogTemplate';
 import { useLocalize, useSetIndexOptions } from '~/hooks';
 import { cn, removeFocusOutlines } from '~/utils/';
@@ -25,9 +26,26 @@ export default function ContextButton({
   const { showToast } = useToastContext();
   const { conversation } = useChatContext();
   const { setOption } = useSetIndexOptions();
+  const { data: endpointsConfig } = useGetEndpointsQuery();
+  // Create a state to control the dialog
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Check if this assistant is in the supportedIds list of any endpoint
+  let isCompanyAssistant = false;
+
+  // Check all endpoints for supportedIds that include this assistant
+  if (endpointsConfig) {
+    Object.entries(endpointsConfig).forEach(([_, config]) => {
+      const supportedIds = (config as { supportedIds?: string[] })?.supportedIds;
+
+      if (supportedIds?.some(id => id === assistant_id)) {
+        isCompanyAssistant = true;
+      }
+    });
+  }
 
   const deleteAssistant = useDeleteAssistantMutation({
-    onSuccess: (_, vars, context) => {
+    onSuccess: (_: void, vars: { assistant_id: string }, context: unknown) => {
       const updatedList = context as Assistant[] | undefined;
       if (!updatedList) {
         return;
@@ -39,7 +57,6 @@ export default function ContextButton({
       });
 
       if (createMutation.data?.id !== undefined) {
-        console.log('[deleteAssistant] resetting createMutation');
         createMutation.reset();
       }
 
@@ -62,7 +79,7 @@ export default function ContextButton({
 
       setCurrentAssistantId(firstAssistant.id);
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       console.error(error);
       showToast({
         message: localize('com_ui_assistant_delete_error'),
@@ -79,15 +96,33 @@ export default function ContextButton({
     return null;
   }
 
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    if (isCompanyAssistant) {
+      e.preventDefault();
+      e.stopPropagation();
+      showToast({
+        message: localize('com_ui_cannot_delete_company_assistant'),
+        status: 'error',
+      });
+      return;
+    }
+
+    setIsDialogOpen(true);
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
         <button
           className={cn(
             'btn btn-neutral border-token-border-light relative h-9 rounded-lg font-medium',
             removeFocusOutlines,
+            isCompanyAssistant ? 'opacity-50 cursor-not-allowed' : ''
           )}
           type="button"
+          disabled={isCompanyAssistant}
+          title={isCompanyAssistant ? localize('com_ui_cannot_delete_company_assistant') : ''}
+          onClick={handleDeleteClick}
         >
           <div className="flex w-full items-center justify-center gap-2 text-red-500">
             <TrashIcon />
@@ -109,8 +144,21 @@ export default function ContextButton({
           </>
         }
         selection={{
-          selectHandler: () =>
-            deleteAssistant.mutate({ assistant_id, model: activeModel, endpoint }),
+          selectHandler: () => {
+            if (!isCompanyAssistant) {
+              deleteAssistant.mutate({
+                assistant_id,
+                model: activeModel,
+                endpoint,
+              });
+            } else {
+              showToast({
+                message: localize('com_ui_cannot_delete_company_assistant'),
+                status: 'error',
+              });
+            }
+            setIsDialogOpen(false);
+          },
           selectClasses: 'bg-red-600 hover:bg-red-700 dark:hover:bg-red-800 text-white',
           selectText: localize('com_ui_delete'),
         }}

@@ -9,14 +9,33 @@ const { getAssistant } = require('~/models/Assistant');
  * @param {string} params.overrideEndpoint - The override endpoint
  * @param {string} params.overrideAssistantId - The override assistant ID
  * @param {OpenAIClient} params.openai - OpenAI API Client
+ * @param {boolean} params.isDelete - Whether this is a delete operation
  * @returns {Promise<void>}
  */
-const validateAuthor = async ({ req, openai, overrideEndpoint, overrideAssistantId }) => {
+const validateAuthor = async ({ req, openai, overrideEndpoint, overrideAssistantId, isDelete = false }) => {
   if (req.user.role === SystemRoles.ADMIN) {
     return;
   }
 
-  const endpoint = overrideEndpoint ?? req.body.endpoint ?? req.query.endpoint;
+  // Try to get the endpoint from various sources
+  let endpoint = overrideEndpoint;
+  if (!endpoint) {
+    endpoint = req.body.endpoint;
+  }
+  if (!endpoint) {
+    endpoint = req.query.endpoint;
+  }
+
+  // If still no endpoint, try to get it from the URL path
+  if (!endpoint) {
+    const pathParts = req.originalUrl.split('/');
+    if (pathParts.includes('v1') || pathParts.includes('v2')) {
+      endpoint = 'assistants';
+    } else if (pathParts.includes('azure')) {
+      endpoint = 'azureAssistants';
+    }
+  }
+
   const assistant_id =
     overrideAssistantId ?? req.params.id ?? req.body.assistant_id ?? req.query.assistant_id;
 
@@ -30,8 +49,27 @@ const validateAuthor = async ({ req, openai, overrideEndpoint, overrideAssistant
     return;
   }
 
-  // Allow assistants explicitly listed in supportedIds regardless of author
-  if (assistantsConfig.supportedIds?.length && assistantsConfig.supportedIds.includes(assistant_id)) {
+  // For delete operations, check all endpoints to prevent deletion of supported assistants by non-admin users
+  if (isDelete) {
+    // Check all endpoints for supportedIds
+    const allEndpoints = Object.keys(req.app.locals || {});
+
+    for (const endpointKey of allEndpoints) {
+      const config = req.app.locals[endpointKey];
+
+      if (config?.supportedIds?.length) {
+        // Check if the assistant_id is in the supportedIds list
+        const isSupported = config.supportedIds.some(id => id === assistant_id);
+
+        if (isSupported) {
+          throw new Error(`Cannot delete assistant ${assistant_id} as it is a company assistant.`);
+        }
+      }
+    }
+  }
+
+  // Allow assistants explicitly listed in supportedIds regardless of author for non-delete operations
+  if (!isDelete && assistantsConfig.supportedIds?.length && assistantsConfig.supportedIds.includes(assistant_id)) {
     return;
   }
 
