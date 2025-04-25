@@ -30,7 +30,7 @@ endpoints:
     disableBuilder: false
     pollIntervalMs: 3000
     timeoutMs: 180000
-    supportedIds: ["asst_sEAoCp3Uk4Dwswt3HTb2OKu6", "asst_HKOeFYKyiX7y88HBzmfPqRkJ"]
+    supportedIds: ["asst_QECrTDasptV4ggU0HWNHRcUM"]
     retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
     privateAssistants: true
@@ -50,7 +50,7 @@ modelSpecs:
       preset:
         endpoint: "assistants"
         model: "gpt-4o"
-        assistant_id: "asst_sEAoCp3Uk4Dwswt3HTb2OKu6"
+        assistant_id: "asst_QECrTDasptV4ggU0HWNHRcUM"
         capabilities: ["retrieval", "code_interpreter"]
     - name: "gpt-4o"
       label: "GPT-4o"
