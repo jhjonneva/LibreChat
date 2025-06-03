@@ -30,7 +30,7 @@ endpoints:
     disableBuilder: false
     pollIntervalMs: 3000
     timeoutMs: 180000
-    supportedIds: ["asst_QECrTDasptV4ggU0HWNHRcUM"]
+    supportedIds: ["asst_QECrTDasptV4ggU0HWNHRcUM", "asst_N3KHp0BaXvgQ80O6gpf9TjyH"]
     retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
     privateAssistants: true
@@ -51,6 +51,18 @@ modelSpecs:
         endpoint: "assistants"
         model: "gpt-4o"
         assistant_id: "asst_QECrTDasptV4ggU0HWNHRcUM"
+        capabilities: ["retrieval", "code_interpreter"]
+    - name: "10x-ba-course-suggestion"
+      label: "10X BA - Course Suggestion Tool"
+      default: true
+      description: "Helping 10X Business Academy team to suggest courses based off of course syllabus and input surveys"
+      iconURL: "https://10xknowledge.up.railway.app/assets/logo.png"
+      showIconInMenu: true
+      showIconInHeader: true
+      preset:
+        endpoint: "assistants"
+        model: "gpt-4o"
+        assistant_id: "asst_N3KHp0BaXvgQ80O6gpf9TjyH"
         capabilities: ["retrieval", "code_interpreter"]
     - name: "gpt-4o"
       label: "GPT-4o"
