@@ -191,7 +191,7 @@ If you'd like to help translate LibreChat into your language, we'd love your con
 
 ---
 
-## 🎉 Special Thanks
+## 🎉 Special Thanks to
 
 We thank [Locize](https://locize.com) for their translation management tools that support multiple languages in LibreChat.
 
