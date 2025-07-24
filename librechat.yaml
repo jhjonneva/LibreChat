@@ -30,7 +30,7 @@ endpoints:
     disableBuilder: false
     pollIntervalMs: 3000
     timeoutMs: 180000
-    supportedIds: ["asst_QECrTDasptV4ggU0HWNHRcUM", "asst_N3KHp0BaXvgQ80O6gpf9TjyH"]
+    supportedIds: ["asst_QECrTDasptV4ggU0HWNHRcUM", "asst_N3KHp0BaXvgQ80O6gpf9TjyH", "asst_l6auPRXCBt1xT2HKZzX7biB3"]
     retrievalModels: ["gpt-4o"]
     capabilities: ["code_interpreter", "retrieval", "actions", "tools", "image_vision"]
     privateAssistants: true
@@ -63,6 +63,18 @@ modelSpecs:
         endpoint: "assistants"
         model: "gpt-4o"
         assistant_id: "asst_N3KHp0BaXvgQ80O6gpf9TjyH"
+        capabilities: ["retrieval", "code_interpreter"]
+    - name: "10x-sop-bot"
+      label: "10X SOP Bot"
+      default: true
+      description: "Helping teams create SOPs"
+      iconURL: "https://10xknowledge.up.railway.app/assets/logo.png"
+      showIconInMenu: true
+      showIconInHeader: true
+      preset:
+        endpoint: "assistants"
+        model: "gpt-4o"
+        assistant_id: "asst_l6auPRXCBt1xT2HKZzX7biB3"
         capabilities: ["retrieval", "code_interpreter"]
     - name: "gpt-4o"
       label: "GPT-4o"
